@@ -23,6 +23,21 @@ class KnowledgeBase(object):
         Args:
             fact (Fact or Rule): Fact or Rule we're asserting in the format produced by read.py
         """
+        if len(self.facts) == 0:    self.facts.append(fact);
+        else:
+            whetherStore = 1  # flag to determine whether store the fact
+
+            # check if the item is already in the fact_list
+            for stored_facts in self.facts:
+                whetherMatch = match(stored_facts.statement, fact.statement, None) # return false if it is a new fact
+
+                if(whetherMatch != False):
+                    whetherStore = 0 # do not save the fact
+                    break
+
+            if(whetherStore): self.facts.append(fact); # judge whether store it
+
+
         print("Asserting {!r}".format(fact))
         
     def kb_ask(self, fact):
@@ -34,4 +49,15 @@ class KnowledgeBase(object):
         Returns:
             ListOfBindings|False - ListOfBindings if result found, False otherwise
         """
+        if len(self.facts) == 0: return False;
+        else:
+            ListOfBindings = []
+            for stored_facts in self.facts:
+                whetherMatch = match(stored_facts.statement, fact.statement, None)
+
+                if(whetherMatch != False): ListOfBindings.append(whetherMatch);
+
+            if (len(ListOfBindings) == 0): return False;
+            else: return ListOfBindings;
+
         print("Asking {!r}".format(fact))
